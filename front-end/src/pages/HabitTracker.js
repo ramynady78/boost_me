@@ -4,7 +4,7 @@ import AddNewHabit from "../components/AddHabitModel";
 import { useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import AllHabitsComponent from "../components/AllHabitsComponent";
-import { isSameDay, parseISO } from "date-fns";
+import { isSameDay } from "date-fns";
 
 function HabitTrackerPage(){
     const isLoggedIn = sessionStorage.getItem("token")?.trim();

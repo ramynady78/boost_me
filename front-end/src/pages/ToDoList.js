@@ -16,7 +16,7 @@ function ToDoListPage(){
     
 
     const isLoggedIn = sessionStorage.getItem("token")?.trim();
-    const {data: allTasks , isLoading ,error} = useGetTasksQuery(undefined, { skip: !isLoggedIn });
+    const {data: allTasks} = useGetTasksQuery(undefined, { skip: !isLoggedIn });
 
     useEffect(() => {
             if (allTasks?.data.tasks) {
