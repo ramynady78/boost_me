@@ -1,0 +1,77 @@
+
+
+
+.footer {
+  background-color: #212529; 
+  color: #f8f9fa; 
+  padding: 3rem 0;
+  z-index: 12223;
+}
+
+/* Navigation Links */
+.footer-links {
+  color: #f8f9fa;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-links:hover {
+  color: var(--primary-dark) !important;
+  text-decoration: underline !important;
+}
+
+/* Social Icons */
+.social-icons a {
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.social-icons a:hover {
+  color: var(--primary-dark);
+  transform: translateY(-2px); 
+}
+
+.social-icons .linkedin {
+  color: #0a66c2; 
+}
+
+.social-icons .git-hub {
+  color: #181717; 
+}
+
+.social-icons .telegram {
+  color: #0088cc; 
+}
+
+.developer-credit a {
+  color: var(--primary) !important;
+  font-weight: 500;
+  text-decoration: none;
+  transition:transform 0.3s ease;
+
+}
+
+.developer-credit a:hover {
+  color: var(--primary-dark) !important; 
+  transform: translateY(-2px) !important;
+}
+
+.copyright {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+/* Responsive  */
+@media (max-width: 767.98px) {
+  .footer .row > div {
+    text-align: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .social-icons {
+    justify-content: center;
+  }
+
+  .footer-links {
+    font-size: 1rem;
+  }
+}

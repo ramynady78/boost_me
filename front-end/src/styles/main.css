@@ -1,0 +1,715 @@
+/* CSS Variables */
+:root {
+  --primary: #8b5cf6;
+  --primary-dark: #7c3aed;
+  --secondary: #06b6d4;
+  --accent: #f59e0b;
+  --accent-dark: #b67505;
+  --success: #10b981;
+  --danger: #ef4444;
+  --danger-dark: #a7050f;
+  
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-light: #94a3b8;
+  
+  --border: #e2e8f0;
+  --shadow: rgba(0, 0, 0, 0.1);
+  --shadow-lg: rgba(0, 0, 0, 0.15);
+  
+  --navbar-height: 80px;
+  --sidebar-width: 280px;
+  --sidebar-collapsed: 70px;
+}
+
+body.dark {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-light: #94a3b8;
+  
+  --border: #334155;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --shadow-lg: rgba(0, 0, 0, 0.4);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+p{
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  transition: all 0.3s ease;
+}
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main Layout */
+.main-layout {
+  display: flex;
+  min-height: calc(100vh - var(--navbar-height));
+  margin-top: var(--navbar-height);
+}
+
+.main-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  transition: margin-left 0.3s ease;
+  background-color: var(--bg-secondary);
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: var(--sidebar-collapsed);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-light);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+  
+  .main-content.sidebar-collapsed {
+    margin-left: 0;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.slide-in {
+  animation: slideIn 0.4s ease-out;
+}
+
+/* Mobile Overlay */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  top: var(--navbar-height);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 850;
+  backdrop-filter: blur(4px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0 !important;
+  }
+  
+  .main-content.sidebar-collapsed {
+    margin-left: 0 !important;
+  }
+  
+  .mobile-overlay {
+    display: block;
+  }
+  
+  .page-content {
+    padding: 2rem 1rem;
+  }
+  
+  .page-content h1 {
+    font-size: 2rem;
+  }
+  
+  .page-content p {
+    font-size: 1.1rem;
+  }
+}
+
+.warning-message{
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+
+}
+
+/* MODALS  */
+/* EDDIT MODAL */
+.edit-modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  width: 100%;
+  max-width: 600px;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+  max-height: 95vh;
+}
+
+@keyframes slideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modal Header */
+.edit-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.edit-modal .modal-header .modal-title-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.edit-modal .modal-header .modal-title-section .modal-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.edit-modal .modal-header .modal-title-section .modal-title-text .modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.edit-modal .modal-header .modal-title-section .modal-title-text .modal-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.edit-modal .modal-header .close-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.edit-modal .modal-header .close-btn:hover {
+  background: var(--danger);
+  color: white;
+  transform: scale(1.05);
+}
+
+/* Edit Model Form */
+.edit-modal .edit-model-form {
+  padding: 2rem;
+}
+
+.edit-modal .edit-model-form .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.edit-modal .edit-model-form .form-grid .input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.edit-modal .edit-model-form .form-grid .input-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.edit-modal .edit-model-form .form-grid .input-group .input-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.edit-modal .edit-model-form .form-grid .input-group .input-label i {
+  font-size: 1rem;
+  color: var(--primary);
+}
+
+.edit-modal .edit-model-form .form-grid .input-group .form-input,
+.edit-modal .edit-model-form .form-grid .input-group .form-select,
+.edit-modal .edit-model-form .form-grid .input-group .form-textarea {
+  width: 100%;
+  padding: 0.875rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  outline: none;
+  font-family: inherit;
+}
+
+.edit-modal .edit-model-form .form-grid .input-group .form-input:focus,
+.edit-modal .edit-model-form .form-grid .input-group .form-select:focus,
+.edit-modal .edit-model-form .form-grid .input-group .form-textarea:focus {
+  border-color: var(--primary);
+  background: var(--bg-secondary);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.edit-modal .edit-model-form .form-grid .input-group .form-input.error,
+.edit-modal .edit-model-form .form-grid .input-group .form-select.error,
+.edit-modal .edit-model-form .form-grid .input-group .form-textarea.error {
+  border-color: var(--danger);
+}
+
+.edit-modal .edit-model-form .form-grid .input-group .form-input::placeholder,
+.edit-modal .edit-model-form .form-grid .input-group .form-textarea::placeholder {
+  color: var(--text-light);
+}
+
+.edit-modal .edit-model-form .form-grid .input-group .form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.edit-modal .edit-model-form .form-grid .input-group .form-select {
+  cursor: pointer;
+}
+
+.edit-modal .edit-model-form .form-grid .input-group .form-select option {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Character Count */
+.edit-modal .edit-model-form .form-grid .input-group .char-count {
+  font-size: 0.8rem;
+  color: var(--text-light);
+  text-align: right;
+  margin-top: -0.25rem;
+}
+
+/* Error Message */
+.edit-modal .edit-model-form .form-grid .input-group .error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--danger);
+  margin-top: -0.25rem;
+}
+
+.edit-modal .edit-model-form .form-grid .input-group .error-message i {
+  font-size: 0.8rem;
+}
+
+/* Form Actions */
+.edit-modal .edit-model-form .form-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.edit-modal .edit-model-form .form-actions .btn-primary,
+.edit-modal .edit-model-form .form-actions .btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  min-width: 130px;
+  justify-content: center;
+}
+
+.edit-modal .edit-model-form .form-actions .btn-primary {
+  background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+}
+
+.edit-modal .edit-model-form .form-actions .btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+  filter: brightness(1.05);
+}
+
+.edit-modal .edit-model-form .form-actions .btn-primary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.edit-modal .edit-model-form .form-actions .btn-secondary {
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 2px solid var(--border);
+}
+
+.edit-modal .edit-model-form .form-actions .btn-secondary:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-color: var(--text-light);
+  transform: translateY(-1px);
+}
+
+.edit-modal .edit-model-form .form-actions .btn-secondary:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Button Spinner */
+.btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal-backdrop {
+    padding: 0.5rem;
+  }
+  
+  .edit-modal {
+    max-height: 95vh;
+  }
+  
+  .edit-modal .modal-header {
+    padding: 1.5rem 1.5rem 1rem;
+  }
+  
+  .edit-modal .modal-header .modal-title-section {
+    gap: 1rem;
+  }
+  
+  .edit-modal .modal-header .modal-title-section .modal-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.2rem;
+  }
+  
+  .edit-modal .modal-header .modal-title-section .modal-title-text .modal-title {
+    font-size: 1.5rem;
+  }
+  
+  .edit-modal .edit-model-form {
+    padding: 1.5rem;
+  }
+  
+  .edit-modal .edit-model-form .form-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .edit-modal .edit-model-form .form-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  
+  .edit-modal .edit-model-form .form-actions .btn-primary,
+  .edit-modal .edit-model-form .form-actions .btn-secondary {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .edit-modal .modal-header .modal-title-section {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.75rem;
+  }
+  
+  .edit-modal .modal-header .modal-title-section .modal-title-text .modal-title {
+    font-size: 1.3rem;
+  }
+}
+/* Disabled Button State */
+.edit-modal .edit-model-form .form-actions .btn-primary.disabled {
+  background: var(--bg-tertiary);
+  color: var(--text-light);
+  cursor: not-allowed;
+  box-shadow: none;
+  border: 2px solid var(--border);
+}
+
+.edit-modal .edit-model-form .form-actions .btn-primary.disabled:hover {
+  transform: none;
+  box-shadow: none;
+  filter: none;
+}
+
+.edit-modal .edit-model-form .form-actions .btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Alternative disabled styling - choose one */
+.edit-modal .edit-model-form .form-actions .btn-primary:disabled:not(.disabled) {
+  background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+  opacity: 0.5;
+}
+/* END STYLE FOR EDDIT MODEAL */
+
+/* INFO MODEL STYLE GLOBAL */
+.info-modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+  width: 100%;
+  max-width: 650px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+/* Modal Header */
+.info-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 2rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-modal .modal-header .modal-title-section {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.info-modal .modal-header .modal-title-section .modal-icon {
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: white;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+.info-modal .modal-header .modal-title-section .modal-title-text .modal-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 0.25rem 0;
+}
+
+.info-modal .modal-header .modal-title-section .modal-title-text .modal-subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.info-modal .modal-header .close-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 10px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.info-modal .modal-header .close-btn:hover {
+    background: var(--danger);
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Model Info Content */
+.info-modal .model-info-content {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Info Sections */
+.info-modal .model-info-content .info-section {
+  background: var(--bg-primary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.info-modal .model-info-content .info-section:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 16px var(--shadow);
+}
+
+.info-modal .model-info-content .info-section .section-header {
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-modal .model-info-content .info-section .section-header i {
+  font-size: 1.1rem;
+  color: var(--primary);
+}
+
+.info-modal .model-info-content .info-section .section-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.info-modal .model-info-content .info-section .section-content {
+  color: var(--text-primary);
+}
+
+/* Model Title Display */
+.info-modal .model-info-content .info-section .title-display {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+.info-modal .model-info-content .info-section .title-display ,
+.info-modal .model-info-content .info-section .streak-display {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+.info-modal .model-info-content .info-section .description-display {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+.info-modal .model-info-content .info-section .no-description {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    font-style: italic;
+    margin: 0;
+}
+
+.info-modal .model-info-content .info-section .no-description i {
+    font-size: 1.1rem;
+    opacity: 0.7;
+}
+/* END INFO STYLE FLOBAL */
+
+/* swal alert */
+.swal2-container {
+  z-index: 122239999 !important;
+}
