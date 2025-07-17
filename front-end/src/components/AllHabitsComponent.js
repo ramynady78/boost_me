@@ -127,7 +127,7 @@ const getMonthlyPattern = (startDay, frequency) => {
 function AllHabitsComponent() {
     const isLoggedIn = sessionStorage.getItem("token")?.trim();
     const { data: allHabits, isLoading, error } = useGetHabitsQuery(undefined, { skip: !isLoggedIn });
-    const [updateHabits , {is_loading}] = useUpdateHabitMutation();
+    const [updateHabits ] = useUpdateHabitMutation();
     const [deleteHabit] = useDeleteHabitMutation();
 
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -136,11 +136,10 @@ function AllHabitsComponent() {
     const [showHabitInfoModal, setShowHabitInfoModal] = useState(false);
 
     
-    
+
     
     // استخدام الـ custom hook
     const {
-        habits,
         currentWeek,
         filteredHabits,
     } = useHabitsLogic(allHabits, selectedDate);
