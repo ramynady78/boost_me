@@ -80,28 +80,6 @@ function PomodoroPage() {
     document.title = isRunning ? formatTime(timeLeft) : "BoostMe";
   }, [isRunning, timeLeft]);
 
-  // إدارة المؤقت
-  useEffect(() => {
-    if (isRunning && !isPause && timeLeft > 0) {
-      timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && isRunning) {
-      handleTimeUp();
-    }
-    return () => clearInterval(timerRef.current);
-  }, [isRunning, isPause, timeLeft]);
-
-  // تعطيل أزرار الجلسات أثناء التشغيل
-  useEffect(() => {
-    sessionTypes.forEach((btn) => {
-      const button = document.querySelector(`.${btn.key}`);
-      if (button) {
-        button.disabled = isRunning && btn.key !== sessionKey;
-      }
-    });
-  }, [isRunning, sessionKey]);
-
   // طلب إذن الإشعارات مرة واحدة فقط بعد أول تفاعل
   const [notificationAsked, setNotificationAsked] = useState(false);
   const requestNotificationPermission = useCallback(() => {
@@ -112,21 +90,48 @@ function PomodoroPage() {
   }, [notificationAsked]);
 
   // إرسال إشعار
-  const sendNotification = (title, options) => {
+  const sendNotification = useCallback((title, options) => {
     if ("Notification" in window && Notification.permission === "granted") {
       new Notification(title, options);
     }
-  };
+  }, []);
 
   // تشغيل صوت التنبيه
-  const playAlarm = () => {
+  const playAlarm = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.play().catch(() => setWarningMessage("sound not will be play!"));
     }
-  };
+  }, []);
+
+  // إنهاء الجلسة
+  const [updatePomodoroSession] = useUpdatePomodoroMutation();
+  const handleCompletSession = useCallback(async () => {
+    if (currentSessionId) {
+      try {
+        await updatePomodoroSession({
+          pomodoroId: currentSessionId,
+          formData: {
+            status: "completed",
+            endedAt: new Date(),
+          },
+        });
+      } catch (error) {
+        setWarningMessage(error?.data?.message);
+      }
+    }
+  }, [currentSessionId, updatePomodoroSession]);
+
+  const handleEndSession = useCallback(() => {
+    setIsRunning(false);
+    setTimeLeft(sessionTime);
+    setIsPause(false);
+    setSessionName(`Session ${allSessions.length + 1}`);
+    setWarningMessage("");
+    handleCompletSession();
+  }, [sessionTime, allSessions.length, handleCompletSession]);
 
   // عند انتهاء الوقت
-  const handleTimeUp = () => {
+  const handleTimeUp = useCallback(() => {
     playAlarm();
     sendNotification("⏰ Time's up!", {
       body: "Your Pomodoro session has ended.",
@@ -149,7 +154,29 @@ function PomodoroPage() {
       }
       setIsRunning(false);
     }, 2000);
-  };
+  }, [playAlarm, sendNotification, handleEndSession, sessionType, defaultSessions]);
+
+  // إدارة المؤقت
+  useEffect(() => {
+    if (isRunning && !isPause && timeLeft > 0) {
+      timerRef.current = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && isRunning) {
+      handleTimeUp();
+    }
+    return () => clearInterval(timerRef.current);
+  }, [isRunning, isPause, timeLeft, handleTimeUp]);
+
+  // تعطيل أزرار الجلسات أثناء التشغيل
+  useEffect(() => {
+    sessionTypes.forEach((btn) => {
+      const button = document.querySelector(`.${btn.key}`);
+      if (button) {
+        button.disabled = isRunning && btn.key !== sessionKey;
+      }
+    });
+  }, [isRunning, sessionKey]);
 
   // بدء الجلسة
   const [createNewPomodoroSession] = useCreatePomodoroMutation();
@@ -174,33 +201,6 @@ function PomodoroPage() {
     } catch (error) {
       setWarningMessage(error?.data?.message || "somthing error");
     }
-  };
-
-  // إنهاء الجلسة
-  const [updatePomodoroSession] = useUpdatePomodoroMutation();
-  const handleCompletSession = async () => {
-    if (currentSessionId) {
-      try {
-        await updatePomodoroSession({
-          pomodoroId: currentSessionId,
-          formData: {
-            status: "completed",
-            endedAt: new Date(),
-          },
-        });
-      } catch (error) {
-        setWarningMessage(error?.data?.message);
-      }
-    }
-  };
-
-  const handleEndSession = () => {
-    setIsRunning(false);
-    setTimeLeft(sessionTime);
-    setIsPause(false);
-    setSessionName(`Session ${allSessions.length + 1}`);
-    setWarningMessage("");
-    handleCompletSession();
   };
 
   // إضافة جلسة جديدة مخصصة
