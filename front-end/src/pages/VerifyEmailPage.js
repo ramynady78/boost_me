@@ -134,7 +134,7 @@ function VerifyEmailPage() {
     setErrors({});
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/api/users/resendotp`, {
+      await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/resendotp`, {
         email: userEmail
       });
 

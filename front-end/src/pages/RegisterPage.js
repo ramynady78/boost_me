@@ -83,7 +83,7 @@ function RegisterPage() {
   };
 
   const sendRequest = async () => {
-    const api = `${process.env.REACT_APP_API_BASE_URL}/api/users/register`;
+    const api = `${process.env.REACT_APP_API_BASE_URL}/users/register`;
     
     try {
       setIsLoading(true);

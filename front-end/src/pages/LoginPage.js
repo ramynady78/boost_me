@@ -35,7 +35,7 @@ function LoginPage() {
   }
 
   const sendRequast = async() => {
-    const api  = `${process.env.REACT_APP_API_BASE_URL}/api/users/login`;
+    const api  = `${process.env.REACT_APP_API_BASE_URL}/users/login`;
 
      try {
         const response = await axios.post(api,{
