@@ -88,7 +88,7 @@ function VerifyEmailPage() {
   };
   const otpString = otp.join('');
   const sendRequast = async() => {
-    const api = `${process.env.REACT_APP_API_BASE_URL}/api/users/verfiy`;
+    const api = `${process.env.REACT_APP_API_BASE_URL}/users/verfiy`;
     try {
       const response = await axios.post(api, {
         email: userEmail,
