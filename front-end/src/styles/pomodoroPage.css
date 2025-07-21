@@ -1,0 +1,961 @@
+/* ========== الأساسيات ========== */
+.pomodoro-page {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - var(--navbar-height));
+  background: var(--bg-primary);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-primary);
+}
+
+/* Header */
+.pomodoro-page .page-header {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.pomodoro-page .page-header .header-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.pomodoro-page .page-header .page-icon {
+  width: 80px;
+  height: 80px;
+  background: var(--accent);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  color: white;
+  box-shadow: 0 8px 32px rgba(245, 158, 11, 0.3);
+  flex-shrink: 0;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.pomodoro-page .page-header .header-text {
+  text-align: left;
+}
+
+.pomodoro-page .page-header .page-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  margin: 0 0 0.5rem 0;
+}
+
+.pomodoro-page .page-header .page-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 500px;
+}
+
+/* Session Buttons */
+.session-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.session-buttons button:not(:last-child) {
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 1.2rem;
+  min-width: 120px;
+  transition: all 0.3s ease;
+  color: inherit;
+  box-shadow: none;
+  background-color: inherit;
+}
+
+.session-buttons button.selected, 
+.session-buttons button:not(:last-child):hover {
+  box-shadow: 0 4px 12px var(--shadow-lg);
+}
+.session-buttons button:disabled{
+  cursor: no-drop !important;
+  box-shadow: none !important;
+}
+
+.session-buttons button.focus {
+  color: var(--primary);
+}
+
+.session-buttons button.focus.selected {
+  border-bottom:2px solid var(--primary);
+}
+
+.session-buttons button.short_break ,
+.session-buttons button.long_break{
+  color: var(--accent);
+}
+
+.session-buttons button.short_break.selected,
+.session-buttons button.long_break.selected {
+  border-bottom:2px solid var(--accent);
+}
+
+.pomodoro-container .setting-btn:hover{
+  background-color: inherit;
+}
+.pomodoro-container .setting-btn .bi-gear{
+  color: var(--text-primary);
+  font-size: 1.5rem;
+}
+
+/* Timer */
+.pomodoro-timer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.timer-circle {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  background-color: var(--bg-secondary);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  padding: 2rem;
+  cursor: pointer;
+}
+
+.timer-circle .progress-circle-2{
+  stroke:var(--accent);
+}
+.timer-circle.focusTime .progress-circle-2{
+  stroke:var(--primary);
+}
+.timer-circle .session-type,
+.timer-circle .task-name{
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.timer-circle .timer-text {
+  color: var(--accent);
+  font-size: 4.75rem;
+  margin-bottom:1rem;
+}
+.timer-circle.focusTime .timer-text {
+  color: var(--primary);
+}
+
+.progress-tape {
+  width: 40%;
+  height: 30px;
+  border: 2px solid var(--border);
+  border-radius: 4px;
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+}
+
+.progress-color {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background-color: var(--accent);
+  z-index: 1;
+}
+
+.progress-tape.focus .progress-color{
+  background-color: var(--primary);
+}
+.progress-label {
+  position: relative;
+  z-index: 2;
+}
+
+.timer-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+.timer-controls button {
+  background-color: var(--accent);
+  border: none;
+  color: white;
+  padding: 0.75rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  min-width: 10rem;
+}
+
+.timer-controls button.start{
+  width: 20rem;
+}
+.timer-controls button.focusTime.start{
+  background-color: var(--primary);
+}
+.timer-controls button.focusTime.start:hover {
+  background-color: var(--primary-dark);
+}
+.timer-controls button:hover {
+  background-color: var(--accent-dark);
+}
+
+.timer-controls button.pause {
+  background-color: var(--accent);
+}
+.timer-controls button.stop {
+  background-color: var(--danger);
+}
+.timer-controls button.reset {
+  background-color: var(--bg-secondary);
+  color: var(--text-secondary);
+}
+
+.timer-controls button.reset:hover {
+  background-color: var(--border);
+}
+
+/* session Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.45); 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modal-container {
+  background: var(--bg-primary);
+  border-radius: 8px;
+  width: 360px;
+  max-width: 90vw;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 8px 20px var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-header-pomodoro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem .25rem;
+  border-bottom:1.25px solid var(--border);
+
+}
+
+.modal-header h2 {
+  font-size: 1.25rem;
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  cursor: pointer;
+  line-height: 1;
+  color: var(--text-secondary);
+  transition: color 0.3s ease;
+}
+
+.close-btn:hover {
+  color: var(--text-primary);
+}
+
+.modal-form {
+  display: flex;
+  gap:20px 12px;
+  flex-wrap: wrap;
+}
+
+.modal-form label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  width: 48%;
+}
+
+.modal-form input[type="number"],
+.modal-form input[type="text"],
+.modal-form textarea {
+  margin-top: 6px;
+  padding: 8px 10px;
+  font-size: 1rem;
+  border: 1.5px solid var(--border);
+  border-radius: 5px;
+  transition: border-color 0.25s ease;
+  outline-offset: 2px;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.modal-form input[type="number"]:focus,
+.modal-form input[type="text"]:focus,
+.modal-form textarea:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.form-actions button {
+  padding: 8px 18px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  font-weight: 600;
+}
+
+.form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-actions button[type="button"] {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.form-actions button[type="button"]:hover:not(:disabled) {
+  background-color: var(--bg-tertiary);
+}
+
+.form-actions button[type="submit"] {
+  background-color: var(--primary);
+  color: var(--bg-primary);
+}
+
+.form-actions button[type="submit"]:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+}
+
+/* qoutes */
+.quote-banner {
+  font-family: "Quicksand", sans-serif;
+  max-width: 90%;
+  margin: 3rem auto;
+  min-height: 4rem;
+  padding: 2rem 2.5rem;
+  border-radius: 16px;
+  font-size: 1.4rem;
+  text-align: center;
+  color: var(--text-primary);
+  border: 2px solid var(--border);
+  box-shadow: 0 6px 20px var(--shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.quote-banner::before {
+  content: "“";
+  font-size: 4rem;
+  color: var(--primary);
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.quote-banner::after {
+  content: "”";
+  font-size: 4rem;
+  color: var(--primary);
+  position: absolute;
+  bottom: -20px;
+  right: 20px;
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.quote-banner:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 30px var(--shadow-lg);
+}
+
+/* ========== Pomodoro Tasks Section ========== */
+.add-pomodoro-session-model {
+  background-color:var(--bg-primary);
+  color: var(--text-primary);
+  width: 80%;
+  margin: 50px auto;
+  padding: 2rem 1rem 1rem;
+  border-radius: 10px;
+  box-shadow: 3px 2px 12px var(--shadow-lg);
+}
+
+.top-header{
+  margin: -0.25rem 0 1rem;
+}
+
+.title {
+  text-align: left;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.5rem;
+}
+
+.sessions-table {
+  margin-bottom: 1rem;
+}
+.sessions-table .table{
+  --bs-table-bg: var(--bg-primary) !important;
+  --bs-table-color: var(--text-primary) !important;
+  --bs-table-border-color: none !important;
+  --bs-table-striped-bg:var(--bg-secondary) !important;
+  --bs-table-striped-color:var(--text-primary) !important;
+}
+tbody, td, tfoot, th, thead, tr {
+  border-color: var(--border);
+  border-style: solid;
+  border-width: 0;
+}
+
+.task-count {
+  color:var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.add-pomodoro-session-model .add-task-btn {
+  border: 3px dashed var(--border);
+  padding: 1rem;
+  border-radius: 10px;
+  text-align: center;
+  color: var(--text-primary);
+  background-color: inherit;
+  cursor: pointer;
+  margin: 1rem auto;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+  width: 100%;
+}
+
+.add-task-btn:hover {
+  background-color:var(--bg-secondary);
+}
+/* add session  */
+.add-session{
+  background-color: var(--bg-secondary);
+  color: var(--primary);
+  padding: 1rem;
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 10px 12px var(--shadow-lg);
+}
+
+.add-session .task-input{
+  font-size: 1.2rem;
+  font-weight: 500;
+  background-color: inherit;
+  border: none;
+  outline: none;
+  border-bottom: 2px solid var(--border);
+  width: 100%;
+  padding: 0.5rem;
+  color: var(--text-primary);
+  height: 4rem;
+  margin-bottom: .5rem;
+}
+.add-session .options button{
+  border: none;
+  background-color: inherit;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+
+}
+.add-session .tasks-div{
+  background-color: var(--bg-primary);
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 4px 12px var(--shadow-lg);
+  max-height: 9rem;
+  overflow-y: scroll;
+}
+.add-session .tasks-div .task-title{
+  background-color: var(--bg-secondary);
+  padding: .75rem;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.add-session .tasks-div .task-title:hover{
+  background-color: var(--bg-tertiary);
+}
+.add-session-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 5px;
+  width: 100%;
+}
+
+.add-session-actions button {
+  padding: 8px 18px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+  font-weight: 600;
+}
+
+.add-session-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.add-session-actions button.btn-cancle {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.add-session-actions button.btn-cancle:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+}
+
+.add-session-actions button.btn-save {
+  background-color: var(--primary);
+  color: var(--bg-primary);
+}
+
+.add-session-actions button.btn-save:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+}
+
+.clear-sessions-box{
+  display: flex;
+  justify-content: flex-end;
+}
+.clear-data-btn{
+  background-color: inherit;
+  border: none;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  padding: 0.5rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: -15px;
+}
+.clear-data-btn:hover{
+  background-color: var(--danger);
+  color: var(--text-primary);
+}
+
+/* ========== Responsive Design ========== */
+
+/* Large Desktop (1200px+) */
+@media (min-width: 1200px) {
+  .pomodoro-page {
+    padding: 2.5rem;
+    max-width: 1400px;
+  }
+  .timer-circle {
+    width: 400px;
+    height: 400px;
+  }
+  .add-pomodoro-session-model {
+    width: 70%;
+    padding: 2.5rem 2rem 2rem;
+  }
+  .modal-container {
+    width: 400px;
+    padding: 2rem 2rem;
+  }
+}
+
+/* Large Tablet & Small Desktop (1024px - 1199px) */
+@media (max-width: 1199px) and (min-width: 1024px) {
+  .pomodoro-page {
+    max-width: 1200px;
+    padding: 2rem;
+  }
+  .timer-circle {
+    width: 350px;
+    height: 350px;
+  }
+  .add-pomodoro-session-model {
+    width: 85%;
+    padding: 2rem 1rem 1rem;
+  }
+  .modal-container {
+    width: 350px;
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* Tablet Landscape (768px - 1023px) */
+@media (max-width: 1023px) and (min-width: 768px) {
+  .pomodoro-page {
+    padding: 1.5rem;
+    max-width: 98vw;
+  }
+  .pomodoro-page .page-header {
+    margin-bottom: 2rem;
+  }
+  .pomodoro-page .page-header .header-content {
+    gap: 1.5rem;
+  }
+  .pomodoro-page .page-header .page-icon {
+    width: 70px;
+    height: 70px;
+    font-size: 2rem;
+  }
+  .pomodoro-page .page-header .page-title {
+    font-size: 2.2rem;
+  }
+  .timer-circle {
+    width: 320px;
+    height: 320px;
+    padding: 1rem;
+  }
+  .add-pomodoro-session-model {
+    width: 95%;
+    padding: 1.5rem 0.5rem 0.5rem;
+  }
+  .modal-container {
+    width: 95vw;
+    padding: 1rem 0.5rem;
+  }
+}
+
+/* Tablet Portrait (768px) */
+@media (max-width: 768px) {
+  .pomodoro-page {
+    padding: 1rem;
+    max-width: 100vw;
+  }
+  .pomodoro-page .page-header {
+    margin-bottom: 1.5rem;
+  }
+  .pomodoro-page .page-header .header-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .pomodoro-page .page-header .header-text {
+    text-align: center;
+  }
+  .pomodoro-page .page-header .page-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 2rem;
+  }
+  .pomodoro-page .page-header .page-title {
+    font-size: 2rem;
+  }
+  .pomodoro-page .page-header .page-subtitle {
+    font-size: 1rem;
+    max-width: 90vw;
+  }
+  .session-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+    position: relative;
+  }
+  .session-buttons button:not(:last-child) {
+    min-width: unset;
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.6rem 1rem;
+  }
+  .pomodoro-timer {
+    gap: 1rem;
+  }
+  .timer-circle {
+    width: 90vw;
+    max-width: 320px;
+    height: 90vw;
+    max-height: 320px;
+    padding: 1rem;
+  }
+  .timer-circle .timer-text {
+    font-size: 2.5rem;
+  }
+  .progress-tape {
+    width: 90%;
+    height: 30px;
+    font-size: 1rem;
+  }
+  .timer-controls {
+    margin-top: .5rem;
+    width: 100%;
+  }
+  .timer-controls button {
+    min-width: unset;
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.6rem 0.5rem;
+  }
+  .add-pomodoro-session-model {
+    width: 98%;
+    padding: 1rem 0.5rem 0.5rem;
+  }
+  .modal-container {
+    width: 98vw;
+    padding: 1rem;
+  }
+  .quote-banner {
+    font-size: 1rem;
+    padding: 1rem 0.5rem;
+    margin: 1.5rem auto;
+  }
+}
+
+/* Mobile Large (481px - 767px) */
+@media (max-width: 767px) and (min-width: 481px) {
+  .pomodoro-page .page-header .page-title {
+    font-size: 1.8rem;
+  }
+}
+
+/* Mobile Medium & Small (320px - 480px) */
+@media (max-width: 480px) {
+  .pomodoro-page {
+    padding: 0.75rem;
+  }
+  .pomodoro-page .page-header {
+    margin-bottom: 1rem;
+  }
+  .pomodoro-page .page-header .header-content {
+    gap: 1rem;
+  }
+  .pomodoro-page .page-header .page-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    border-radius: 15px;
+    margin-top: 1.5rem;
+  }
+  .pomodoro-page .page-header .page-title {
+    font-size: 1.6rem;
+  }
+  .pomodoro-page .page-header .page-subtitle {
+    font-size: 0.9rem;
+  }
+  .add-pomodoro-session-model {
+    width: 100%;
+    padding: 1.5rem;
+  }
+  .modal-container {
+    width: 99vw;
+    padding: 1rem;
+  }
+  .session-buttons{
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1.2rem;
+  }
+  .session-buttons .setting-btn{
+    position: absolute;
+    bottom: -4rem;
+    right: 1rem;
+  }
+  .quote-banner {
+    font-size: 1.2rem;
+    padding: 0.75rem 0.25rem;
+    min-height: 9rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .quote-banner::before{
+    top: -16px;
+    left: 7px;
+  }
+  .quote-banner::after{
+    bottom: -47px;
+    right: 8px;
+  }
+  .clear-data-btn{
+    width: 100%;
+  }
+}
+
+/* Mobile Extra Small (320px and below) */
+@media (max-width: 320px) {
+  .pomodoro-page {
+    padding: 0.5rem;
+  }
+  .pomodoro-page .page-header .page-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+  }
+  .pomodoro-page .page-header .page-title {
+    font-size: 1.4rem;
+  }
+  .add-pomodoro-session-model {
+    width: 100%;
+    padding: 0.25rem 0.1rem 0.1rem;
+  }
+  .modal-container {
+    width: 99vw;
+    padding: 1rem;
+  }
+}
+
+/* Landscape Orientation for Mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+  .add-pomodoro-session-model {
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+  .modal-container {
+    max-height: 95vh;
+    overflow-y: auto;
+  }
+}
+
+/* High DPI Displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .pomodoro-page .page-header .page-icon {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+/*  */
+/* Responsive Table - Mobile */
+@media (max-width: 600px) {
+  .responsive-table thead {
+    display: none;
+  }
+  .responsive-table, 
+  .responsive-table tbody, 
+  .responsive-table tr, 
+  .responsive-table td, 
+  .responsive-table th {
+    display: block;
+    width: 100%;
+  }
+  .responsive-table tr {
+    margin-bottom: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px var(--shadow-lg);
+    background: var(--bg-primary);
+    padding: 1rem 0.5rem;
+  }
+  .responsive-table td, 
+  .responsive-table th {
+    padding: 0.5rem 1rem;
+    text-align: left;
+    border: none;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 1rem;
+  }
+  .responsive-table td:before ,
+  .responsive-table th:before{
+    content: attr(data-label);
+    font-weight: 700;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.95rem;
+    width: 5rem;
+    border-right:1px solid var(--border);
+    padding: 0px;
+  }
+}
+
+.guest-mode-banner {
+  background-color: var(--danger);
+  border: 1px solid var(--danger-dark);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 1rem auto;
+  width: 90%;
+}
+
+.guest-notice {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 8px;
+}
+
+.login-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all .5s ease;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+  transform: translateY(-6px);
+}
+
+.warning-message.guest-info {
+  background-color: var(--danger);
+  color: var(--text-primary);
+  border-color: var(--danger-dark);
+}
+
+@media (max-width: 768px){
+  .guest-notice{
+    flex-direction: column;
+  }
+}
