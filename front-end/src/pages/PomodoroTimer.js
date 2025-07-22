@@ -14,7 +14,7 @@ const sessionTypes = [
 
 // Default settings for guests (non-logged-in users)
 const GUEST_DEFAULT_SETTINGS = {
-  focusTime: 25,
+  focusTime: 10,
   shortBreak: 5,
   longBreak: 15,
   roundsBeforeLongBreak: 4,
@@ -75,6 +75,8 @@ function PomodoroPage() {
   // مراجع المؤقت والصوت
   const timerRef = useRef(null);
   const audioRef = useRef(null);
+  const endTimeRef = useRef(null);       
+  const pauseTimeRef = useRef(null);    
 
   // تحديث اسم الجلسة تلقائيًا إذا لم يكن مخصصًا
   useEffect(() => {
@@ -193,15 +195,28 @@ function PomodoroPage() {
 
   // إدارة المؤقت
   useEffect(() => {
-    if (isRunning && !isPause && timeLeft > 0) {
-      timerRef.current = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && isRunning) {
-      handleTimeUp();
+  if (isRunning && !isPause && timeLeft > 0) {
+    if (!endTimeRef.current) {
+      endTimeRef.current = Date.now() + timeLeft * 1000;
     }
-    return () => clearInterval(timerRef.current);
-  }, [isRunning, isPause, timeLeft, handleTimeUp]);
+
+    timerRef.current = setInterval(() => {
+      const secondsLeft = Math.max(
+        Math.floor((endTimeRef.current - Date.now()) / 1000),
+        0
+      );
+      setTimeLeft(secondsLeft);
+
+      if (secondsLeft <= 0) {
+        clearInterval(timerRef.current);
+        endTimeRef.current = null;
+        handleTimeUp();
+      }
+    }, 1000);
+  }
+  return () => clearInterval(timerRef.current);
+}, [isRunning, isPause, handleTimeUp]);
+
 
   // تعطيل أزرار الجلسات أثناء التشغيل
   useEffect(() => {
@@ -332,9 +347,11 @@ function PomodoroPage() {
                 {label}
               </button>
             ))}
+            {isLoggedIn &&
             <button className="setting-btn btn" onClick={() => setShowModal(true)}>
               <i className="bi bi-gear"></i>
             </button>
+            }
           </div>
 
           <div className="pomodoro-timer" role="timer" aria-live="assertive" aria-atomic="true">
@@ -414,10 +431,22 @@ function PomodoroPage() {
                   <button
                     className={`${sessionKey} pause`}
                     type="button"
-                    onClick={() => setIsPause((prev) => !prev)}
+                    onClick={() => {
+                      if (!isPause) {
+                        pauseTimeRef.current = timeLeft;
+                        clearInterval(timerRef.current);
+                        setIsPause(true);
+                      } else {
+                        const newEndTime = Date.now() + pauseTimeRef.current * 1000;
+                        endTimeRef.current = newEndTime;
+                        setTimeLeft(pauseTimeRef.current);
+                        setIsPause(false);
+                      }
+                    }}
                   >
                     {isPause ? "Continue" : "Pause"}
                   </button>
+
                   <button
                     onClick={() => {
                       setTimeLeft(sessionTime);
