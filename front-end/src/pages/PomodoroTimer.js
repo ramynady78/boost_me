@@ -14,7 +14,7 @@ const sessionTypes = [
 
 // Default settings for guests (non-logged-in users)
 const GUEST_DEFAULT_SETTINGS = {
-  focusTime: 10,
+  focusTime: 25,
   shortBreak: 5,
   longBreak: 15,
   roundsBeforeLongBreak: 4,
@@ -161,6 +161,7 @@ function PomodoroPage() {
     if (isLoggedIn) {
       handleCompletSession();
     }
+
   }, [sessionTime, allSessions.length, guestSessionCount, handleCompletSession, isLoggedIn]);
 
   // عند انتهاء الوقت
@@ -186,7 +187,7 @@ function PomodoroPage() {
         setTimeLeft(defaultSessions.focusTime * 60);
       }
       setIsRunning(false);
-    }, 2000);
+    }, 1000);
     
     if (isLoggedIn) {
       handleCompletSession();
@@ -228,14 +229,25 @@ function PomodoroPage() {
     });
   }, [isRunning, sessionKey]);
 
+
   // بدء الجلسة
   const [createNewPomodoroSession] = useCreatePomodoroMutation();
+  const createSessionInDB = async (formData) => {
+      try {
+        const response = await createNewPomodoroSession(formData).unwrap();
+        if (response?.data?.newPomodoreSession?._id) {
+          setCurrentSessionId(response.data.newPomodoreSession._id);
+        }
+      } catch (error) {
+        setWarningMessage(error?.data?.message || "Something went wrong while saving the session");
+      }
+  };
+
   const handleStartSession = async () => {
     setIsRunning(true);
     setIsPause(false);
     requestNotificationPermission();
 
-    // Only save to database if user is logged in
     if (isLoggedIn) {
       const sessionTimeMinutes = sessionTime / 60;
       const formData = {
@@ -244,33 +256,37 @@ function PomodoroPage() {
         duration: sessionTimeMinutes,
         status: "inProgress",
       };
-      
-      try {
-        const response = await createNewPomodoroSession(formData).unwrap();
-        if (response?.data?.newPomodoreSession?._id) {
-          setCurrentSessionId(response.data.newPomodoreSession._id);
-        }
-      } catch (error) {
-        setWarningMessage(error?.data?.message || "Something went wrong");
-      }
-    } else {
-      // For guests, just show a friendly message
+      await createSessionInDB(formData);
+    } 
+    else{
       setWarningMessage("Running in guest mode - sessions won't be saved. Sign in to track your progress!");
       setTimeout(() => setWarningMessage(""), 3000);
     }
   };
 
+
   // إضافة جلسة جديدة مخصصة
-  const handleNewSession = (newSession) => {
-    setIsCustomName(true);
-    setSessionType(newSession.sessionType);
-    setSessionName(newSession.sessionName);
-    const durationSeconds = newSession.duration * 60;
-    setSessionTime(durationSeconds);
-    setTimeLeft(durationSeconds);
-    setIsRunning(true);
-    setIsPause(false);
+  const handleNewSession = async (newSession) => {
+  setIsCustomName(true);
+  setSessionType(newSession.sessionType);
+  setSessionName(newSession.sessionName);
+  const durationSeconds = newSession.duration * 60;
+  setSessionTime(durationSeconds);
+  setTimeLeft(durationSeconds);
+  setIsRunning(true);
+  setIsPause(false);
+
+  if (isLoggedIn) {
+    const formData = {
+      sessionName: newSession.sessionName,
+      sessionType: newSession.sessionType,
+      duration: newSession.duration,
+      status: "inProgress",
+    };
+    await createSessionInDB(formData);
+  }
   };
+
 
   // تنسيق الوقت
   const formatTime = (seconds) => {
