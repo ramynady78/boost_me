@@ -25,10 +25,9 @@ function PomodoroPage() {
 
   // جلب إعدادات المستخدم الافتراضية (only for logged-in users)
   const { data: userDefaultSetting, isLoading } = useGetUserSettingsQuery(undefined, {
-    skip: !isLoggedIn, 
+    skip: !isLoggedIn,
   });
 
-  
   // الحالة الافتراضية للجلسات
   const [defaultSessions, setDefaultSessions] = useState(GUEST_DEFAULT_SETTINGS);
 
@@ -42,11 +41,11 @@ function PomodoroPage() {
 
   // جلب كل الجلسات (only for logged-in users)
   const { data: pomodoroSessions } = useGetpomodorosQuery(undefined, {
-    skip: !isLoggedIn, 
+    skip: !isLoggedIn,
   });
-  
+
   const [allSessions, setAllSessions] = useState([]);
-  
+
   useEffect(() => {
     if (isLoggedIn && pomodoroSessions?.data?.allPomodoroSessions) {
       setAllSessions(pomodoroSessions.data.allPomodoroSessions);
@@ -75,14 +74,14 @@ function PomodoroPage() {
   // مراجع المؤقت والصوت
   const timerRef = useRef(null);
   const audioRef = useRef(null);
-  const endTimeRef = useRef(null);       
-  const pauseTimeRef = useRef(null);    
+  const endTimeRef = useRef(null);
+  const pauseTimeRef = useRef(null);
 
   // تحديث اسم الجلسة تلقائيًا إذا لم يكن مخصصًا
   useEffect(() => {
     if (!isCustomName) {
       const sessionCount = isLoggedIn ? allSessions.length + 1 : guestSessionCount;
-      setSessionName(`Session ${sessionCount}`);
+      setSessionName(`Session ${sessionCount - 1}`);
     }
   }, [allSessions.length, guestSessionCount, isCustomName, isLoggedIn]);
 
@@ -145,23 +144,26 @@ function PomodoroPage() {
   }, [currentSessionId, updatePomodoroSession, isLoggedIn]);
 
   const handleEndSession = useCallback(() => {
+    clearInterval(timerRef.current);
+    endTimeRef.current = null;
+    pauseTimeRef.current = null;
+
     setIsRunning(false);
     setTimeLeft(sessionTime);
     setIsPause(false);
-    
+
     // Update session count for guests
     if (!isLoggedIn) {
       setGuestSessionCount(prev => prev + 1);
     }
-    
+
     const nextSessionCount = isLoggedIn ? allSessions.length + 1 : guestSessionCount + 1;
     setSessionName(`Session ${nextSessionCount}`);
     setWarningMessage("");
-    
+
     if (isLoggedIn) {
       handleCompletSession();
     }
-
   }, [sessionTime, allSessions.length, guestSessionCount, handleCompletSession, isLoggedIn]);
 
   // عند انتهاء الوقت
@@ -188,7 +190,7 @@ function PomodoroPage() {
       }
       setIsRunning(false);
     }, 1000);
-    
+
     if (isLoggedIn) {
       handleCompletSession();
     }
@@ -196,28 +198,28 @@ function PomodoroPage() {
 
   // إدارة المؤقت
   useEffect(() => {
-  if (isRunning && !isPause && timeLeft > 0) {
-    if (!endTimeRef.current) {
-      endTimeRef.current = Date.now() + timeLeft * 1000;
-    }
-
-    timerRef.current = setInterval(() => {
-      const secondsLeft = Math.max(
-        Math.floor((endTimeRef.current - Date.now()) / 1000),
-        0
-      );
-      setTimeLeft(secondsLeft);
-
-      if (secondsLeft <= 0) {
-        clearInterval(timerRef.current);
-        endTimeRef.current = null;
-        handleTimeUp();
+    if (isRunning && !isPause && timeLeft > 0) {
+      if (!endTimeRef.current) {
+        endTimeRef.current = Date.now() + timeLeft * 1000;
       }
-    }, 1000);
-  }
-  return () => clearInterval(timerRef.current);
-}, [isRunning, isPause, handleTimeUp]);
 
+      timerRef.current = setInterval(() => {
+        const secondsLeft = Math.max(
+          Math.floor((endTimeRef.current - Date.now()) / 1000),
+          0
+        );
+        setTimeLeft(secondsLeft);
+
+        if (secondsLeft <= 0) {
+          clearInterval(timerRef.current);
+          endTimeRef.current = null;
+          handleTimeUp();
+        }
+      }, 1000);
+    }
+    return () => clearInterval(timerRef.current);
+    // eslint-disable-next-line
+  }, [isRunning, isPause, handleTimeUp]);
 
   // تعطيل أزرار الجلسات أثناء التشغيل
   useEffect(() => {
@@ -229,18 +231,17 @@ function PomodoroPage() {
     });
   }, [isRunning, sessionKey]);
 
-
   // بدء الجلسة
   const [createNewPomodoroSession] = useCreatePomodoroMutation();
   const createSessionInDB = async (formData) => {
-      try {
-        const response = await createNewPomodoroSession(formData).unwrap();
-        if (response?.data?.newPomodoreSession?._id) {
-          setCurrentSessionId(response.data.newPomodoreSession._id);
-        }
-      } catch (error) {
-        setWarningMessage(error?.data?.message || "Something went wrong while saving the session");
+    try {
+      const response = await createNewPomodoroSession(formData).unwrap();
+      if (response?.data?.newPomodoreSession?._id) {
+        setCurrentSessionId(response.data.newPomodoreSession._id);
       }
+    } catch (error) {
+      setWarningMessage(error?.data?.message || "Something went wrong while saving the session");
+    }
   };
 
   const handleStartSession = async () => {
@@ -257,36 +258,33 @@ function PomodoroPage() {
         status: "inProgress",
       };
       await createSessionInDB(formData);
-    } 
-    else{
+    } else {
       setWarningMessage("Running in guest mode - sessions won't be saved. Sign in to track your progress!");
       setTimeout(() => setWarningMessage(""), 3000);
     }
   };
 
-
   // إضافة جلسة جديدة مخصصة
   const handleNewSession = async (newSession) => {
-  setIsCustomName(true);
-  setSessionType(newSession.sessionType);
-  setSessionName(newSession.sessionName);
-  const durationSeconds = newSession.duration * 60;
-  setSessionTime(durationSeconds);
-  setTimeLeft(durationSeconds);
-  setIsRunning(true);
-  setIsPause(false);
+    setIsCustomName(true);
+    setSessionType(newSession.sessionType);
+    setSessionName(newSession.sessionName);
+    const durationSeconds = newSession.duration * 60;
+    setSessionTime(durationSeconds);
+    setTimeLeft(durationSeconds);
+    setIsRunning(true);
+    setIsPause(false);
 
-  if (isLoggedIn) {
-    const formData = {
-      sessionName: newSession.sessionName,
-      sessionType: newSession.sessionType,
-      duration: newSession.duration,
-      status: "inProgress",
-    };
-    await createSessionInDB(formData);
-  }
+    if (isLoggedIn) {
+      const formData = {
+        sessionName: newSession.sessionName,
+        sessionType: newSession.sessionType,
+        duration: newSession.duration,
+        status: "inProgress",
+      };
+      await createSessionInDB(formData);
+    }
   };
-
 
   // تنسيق الوقت
   const formatTime = (seconds) => {
@@ -321,10 +319,9 @@ function PomodoroPage() {
             <div className="header-text">
               <h1 className="page-title">Pomodoro Timer</h1>
               <p className="page-subtitle">
-                {isLoggedIn 
-                  ? "Organize and track your daily tasks efficiently" 
-                  : "Try our Pomodoro Timer - Sign in to save your progress!"
-                }
+                {isLoggedIn
+                  ? "Organize and track your daily tasks efficiently"
+                  : "Try our Pomodoro Timer - Sign in to save your progress!"}
               </p>
             </div>
           </div>
@@ -332,15 +329,13 @@ function PomodoroPage() {
             <div className="guest-mode-banner">
               <p className="guest-notice">
                 <i className="bi bi-info-circle"></i>
-                You're using guest mode. Your sessions won't be saved. 
+                You're using guest mode. Your sessions won't be saved.
                 <Link to={"/login"} className="login-link"> Login here</Link>
               </p>
             </div>
           )}
         </div>
-        
         <QuoteBanner />
-        
         <div className="pomodoro-container">
           <div className="session-buttons">
             {sessionTypes.map(({ key, label, colorClass }) => (
@@ -363,22 +358,19 @@ function PomodoroPage() {
                 {label}
               </button>
             ))}
-            {isLoggedIn &&
-            <button className="setting-btn btn" onClick={() => setShowModal(true)}>
-              <i className="bi bi-gear"></i>
-            </button>
-            }
+            {isLoggedIn && (
+              <button className="setting-btn btn" onClick={() => setShowModal(true)}>
+                <i className="bi bi-gear"></i>
+              </button>
+            )}
           </div>
-
           <div className="pomodoro-timer" role="timer" aria-live="assertive" aria-atomic="true">
             {warningMessage && (
               <p className={`general warning-message ${!isLoggedIn && warningMessage.includes('guest mode') ? 'guest-info' : ''}`}>
                 {warningMessage}
               </p>
             )}
-            
             <audio src="/assets/alarm-327234.mp3" ref={audioRef} preload="auto" />
-            
             <div className={`timer-circle ${sessionKey}`} aria-label={`Time left: ${formatTime(timeLeft)}`}>
               {customProgress >= 0 && (
                 <svg
@@ -427,7 +419,6 @@ function PomodoroPage() {
                 </p>
               </div>
             </div>
-
             {isRunning && (
               <div className={`progress-tape ${sessionType}`}>
                 <div
@@ -440,7 +431,6 @@ function PomodoroPage() {
                 <span className="progress-label">{`${(100 - progress * 100).toFixed()}%`}</span>
               </div>
             )}
-
             <div className="timer-controls">
               {isRunning ? (
                 <>
@@ -462,11 +452,11 @@ function PomodoroPage() {
                   >
                     {isPause ? "Continue" : "Pause"}
                   </button>
-
                   <button
                     onClick={() => {
                       setTimeLeft(sessionTime);
                       setIsPause(false);
+                      endTimeRef.current = Date.now() + sessionTime * 1000;
                     }}
                     type="button"
                     className="reset"
@@ -484,19 +474,17 @@ function PomodoroPage() {
               )}
             </div>
           </div>
-
           {/* Show AddPomodoroSessionModel for both logged-in and guest users */}
-          {isLoggedIn && 
-          <AddPomodoroSessionModel
-            onSessionAdd={handleNewSession}
-            isRunning={isRunning}
-            sessionType={sessionType}
-            sessionTime={sessionTime}
-            isGuest={!isLoggedIn}
-          />
-          }
+          {isLoggedIn && (
+            <AddPomodoroSessionModel
+              onSessionAdd={handleNewSession}
+              isRunning={isRunning}
+              sessionType={sessionType}
+              sessionTime={sessionTime}
+              isGuest={!isLoggedIn}
+            />
+          )}
         </div>
-
         {isLoggedIn && showModal && (
           <DefaultSettingsModal
             onCancel={() => setShowModal(false)}
@@ -508,6 +496,6 @@ function PomodoroPage() {
       </div>
     </>
   );
-}
+};
 
 export default PomodoroPage;

@@ -24,24 +24,23 @@ const AddPomodoroSessionModel = ({sessionType ,sessionTime , onSessionAdd ,isRun
     }, [pomodoroSessions]);
 
     const reverseSessions = [...sessions].reverse()
-    const sendData = async ()=>{
-        const sessionTimeMinutes = sessionTime / 60 ;
+
+    const sendData = async () => {
+        const sessionTimeMinutes = sessionTime / 60;
         const formData = {
-            sessionName:sessionName,
-            sessionType:sessionType,
-            duration:sessionTimeMinutes,
-            status:"inProgress",
-        }
-        try{
-            const response = await createPomodro(formData).unwrap();
-            if(response) {
-                onSessionAdd(formData)
-            }
-        }catch (error){
-            const message = error?.data?.message;
+            sessionName: sessionName,
+            sessionType: sessionType,
+            duration: sessionTimeMinutes,
+            status: "inProgress",
+        };
+        try {
+            onSessionAdd(formData);
+            setShowAddSession(false);
+        } catch (error) {
+            const message = error?.data?.message || "Something went wrong";
             document.querySelector(".general.warning-message").textContent = message;
         }
-    }
+    };
     const { data: inProgressTasks } = useGetTasksQuery({ status: "In Progress" });
     const { data: notStartedTasks} = useGetTasksQuery({ status: "Not Started" });
 
